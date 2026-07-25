@@ -57,7 +57,7 @@ impl PasteService {
     }
 
     pub async fn get_paste_by_id(&self, id: Id) -> AppResult<Paste> {
-        self.0.get_paste_by_id(id).await?.ok_or(AppError::NotFound)
+        self.0.view_paste(id).await?.ok_or(AppError::NotFound)
     }
 
     pub async fn update_paste_data(&self, id: Id, data: UpdatePasteDto) -> AppResult<Paste> {
@@ -87,10 +87,6 @@ impl PasteService {
             )
             .await?
             .ok_or(AppError::NotFound)
-    }
-
-    pub async fn update_paste_views(&self, id: Id) -> AppResult<Paste> {
-        self.0.increment_views(id).await?.ok_or(AppError::NotFound)
     }
 
     pub async fn delete_paste_by_id(&self, id: Id) -> AppResult<Paste> {

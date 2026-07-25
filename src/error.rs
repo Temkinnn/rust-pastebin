@@ -1,13 +1,18 @@
 use actix_web::{HttpResponse, ResponseError, http::StatusCode};
 use serde_json::json;
 use thiserror::Error;
+use utoipa::ToSchema;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, ToSchema)]
 pub enum AppError {
     #[error("Internal server error")]
     Internal,
     #[error("Database Error")]
-    Database(#[from] sqlx::Error),
+    Database {
+        #[from]
+        #[schema(value_type = String)]
+        source: sqlx::Error,
+    },
     #[error("Resource not found")]
     NotFound,
 }
@@ -15,7 +20,7 @@ pub enum AppError {
 impl ResponseError for AppError {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
-            AppError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::Database { source: _ } => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::Internal => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::NotFound => StatusCode::NOT_FOUND,
         }

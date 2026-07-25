@@ -46,20 +46,7 @@ impl PasteRepository {
         .await
     }
 
-    pub async fn get_paste_by_id(&self, id: Id) -> DatabaseResult<Option<Paste>> {
-        sqlx::query_as!(
-            Paste,
-            "
-            Select id, title, content, language, views, one_time, expires_at from paste
-            Where id = $1
-            ",
-            id
-        )
-        .fetch_optional(&self.pool)
-        .await
-    }
-
-    pub async fn increment_views(&self, id: Id) -> DatabaseResult<Option<Paste>> {
+    pub async fn view_paste(&self, id: Id) -> DatabaseResult<Option<Paste>> {
         sqlx::query_as!(
             Paste,
             "

@@ -5,5 +5,5 @@ pub mod env;
 mod error;
 pub mod handlers;
 mod repositories;
-mod services;
+pub mod services;
 mod types;

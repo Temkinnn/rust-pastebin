@@ -1,5 +1,5 @@
 use crate::{
-    models::paste::{CreatePasteRepoDto, Paste, UpdatePasteDto},
+    models::paste::{CreatePasteRepoDto, Paste, UpdatePasteRepoDto},
     types::{Database, DatabaseResult, Id},
 };
 
@@ -12,7 +12,7 @@ impl PasteRepository {
         Self { pool }
     }
 
-    pub async fn create_paste(&self, data: CreatePasteRepoDto) -> DatabaseResult<Paste> {
+    pub async fn create_paste(&self, dto: CreatePasteRepoDto) -> DatabaseResult<Paste> {
         sqlx::query_as!(
             Paste,
             "
@@ -20,12 +20,12 @@ impl PasteRepository {
             Values ($1, $2, $3, $4, $5, $6)
             Returning id, title, content, language, views, one_time, expires_at;
             ",
-            data.id,
-            data.title,
-            data.content,
-            data.language,
-            data.one_time.unwrap_or(false),
-            data.expires_at
+            dto.id,
+            dto.title,
+            dto.content,
+            dto.language,
+            dto.one_time.unwrap_or(false),
+            dto.expires_at
         )
         .fetch_one(&self.pool)
         .await
@@ -77,7 +77,7 @@ impl PasteRepository {
     pub async fn update_paste(
         &self,
         id: Id,
-        data: UpdatePasteDto,
+        data: UpdatePasteRepoDto,
     ) -> DatabaseResult<Option<Paste>> {
         sqlx::query_as!(
             Paste,

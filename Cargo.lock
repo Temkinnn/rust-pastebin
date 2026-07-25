@@ -514,9 +514,6 @@ name = "deranged"
 version = "0.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
-dependencies = [
- "serde_core",
-]
 
 [[package]]
 name = "derive_arbitrary"
@@ -1395,7 +1392,6 @@ dependencies = [
  "serde_json",
  "sqlx",
  "thiserror",
- "time",
  "utoipa",
  "utoipa-actix-web",
  "utoipa-swagger-ui",
@@ -1620,6 +1616,7 @@ dependencies = [
  "base64",
  "bytes",
  "cfg-if",
+ "chrono",
  "crc",
  "crossbeam-queue",
  "either",
@@ -1639,7 +1636,6 @@ dependencies = [
  "sha2 0.10.9",
  "smallvec",
  "thiserror",
- "time",
  "tokio",
  "tokio-stream",
  "tracing",
@@ -1694,6 +1690,7 @@ dependencies = [
  "bitflags",
  "byteorder",
  "bytes",
+ "chrono",
  "crc",
  "digest 0.11.3",
  "dotenvy",
@@ -1708,7 +1705,6 @@ dependencies = [
  "sha2 0.11.0",
  "sqlx-core",
  "thiserror",
- "time",
  "tracing",
 ]
 
@@ -1722,6 +1718,7 @@ dependencies = [
  "base64",
  "bitflags",
  "byteorder",
+ "chrono",
  "crc",
  "dotenvy",
  "etcetera",
@@ -1743,7 +1740,6 @@ dependencies = [
  "sqlx-core",
  "stringprep",
  "thiserror",
- "time",
  "tracing",
  "whoami",
 ]
@@ -1755,6 +1751,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "488e99c397a62007e4229aec669a179816339afc6d2620ca6fa420dbee2e982c"
 dependencies = [
  "atoi",
+ "chrono",
  "flume",
  "form_urlencoded",
  "futures-channel",
@@ -1768,7 +1765,6 @@ dependencies = [
  "serde",
  "sqlx-core",
  "thiserror",
- "time",
  "tracing",
  "url",
 ]
@@ -2099,6 +2095,7 @@ version = "1.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
 dependencies = [
+ "getrandom",
  "js-sys",
  "wasm-bindgen",
 ]

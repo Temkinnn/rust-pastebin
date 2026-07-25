@@ -11,7 +11,8 @@ impl DatabasePool {
         let pool = PgPool::connect(&url)
             .await
             .expect("Failed to connect to database");
-        // let _ = sqlx::migrate!().run(&pool).await;
+        
+        let _ = sqlx::migrate!().run(&pool).await;
         pool
     }
 }

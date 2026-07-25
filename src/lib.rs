@@ -1,4 +1,9 @@
+mod models;
 mod config;
-mod db;
+pub mod db;
 pub mod env;
+mod error;
+mod handlers;
+mod repositories;
+mod services;
 mod types;

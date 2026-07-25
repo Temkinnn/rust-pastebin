@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use time::PlainDateTime;
 
 pub struct Paste {

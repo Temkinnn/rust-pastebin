@@ -3,7 +3,7 @@ use utoipa_actix_web::{scope, service_config::ServiceConfig};
 
 use crate::{
     error::AppError,
-    models::paste::{CreatePasteDto, GetPastesQuery, Paste, UpdatePasteDto},
+    models::paste::{CreatePasteDto, GetPastesQuery, Paste, PasteResponse, UpdatePasteDto},
     repositories::paste::PasteRepository,
     services::paste::PasteService,
     types::{AppResult, Database, Id},
@@ -14,7 +14,7 @@ use crate::{
     request_body = CreatePasteDto,
     description = "Создать запись",
     responses(
-        (status = 201, body = Paste),
+        (status = 201, body = PasteResponse),
         (status = 500, body = AppError, description = "Внутренняя ошибка сервера или БД",
             example = json!({
                 "error": "Database Error"
@@ -37,7 +37,7 @@ async fn create_paste(
     description = "Получить список записей",
     params(GetPastesQuery),
     responses(
-        (status = 200, body = [Paste]),
+        (status = 200, body = [PasteResponse]),
         (status = 500, body = AppError, description = "Внутренняя ошибка сервера или БД",
             example = json!({
                 "error": "Database Error"
@@ -142,6 +142,7 @@ async fn delete_paste_by_id(
     let paste = service.delete_paste_by_id(id).await?;
     Ok(HttpResponse::Ok().json(paste))
 }
+
 
 pub fn paste_router(cfg: &mut ServiceConfig, pool: Database) {
     let repo = PasteRepository::new(pool);

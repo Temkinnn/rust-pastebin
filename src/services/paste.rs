@@ -4,7 +4,8 @@ use uuid::Uuid;
 use crate::{
     error::AppError,
     models::paste::{
-        CreatePasteDto, CreatePasteRepoDto, Paste, UpdatePasteDto, UpdatePasteRepoDto,
+        CreatePasteDto, CreatePasteRepoDto, Paste, PasteResponse, UpdatePasteDto,
+        UpdatePasteRepoDto,
     },
     repositories::paste::PasteRepository,
     types::{AppResult, Id},
@@ -17,7 +18,7 @@ impl PasteService {
         Self(repo)
     }
 
-    pub async fn create_paste(&self, data: CreatePasteDto) -> AppResult<Paste> {
+    pub async fn create_paste(&self, data: CreatePasteDto) -> AppResult<PasteResponse> {
         let id = Uuid::now_v7().to_string();
 
         let CreatePasteDto {
@@ -48,7 +49,7 @@ impl PasteService {
         &self,
         limit: Option<i64>,
         offset: Option<i64>,
-    ) -> AppResult<Vec<Paste>> {
+    ) -> AppResult<Vec<PasteResponse>> {
         let limit = limit.unwrap_or(10);
         let offset = offset.unwrap_or(0);
         Ok(self.0.get_pastes(limit, offset).await?)

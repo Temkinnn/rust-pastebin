@@ -13,6 +13,13 @@ pub struct Paste {
     pub expires_at: Option<NaiveDateTime>,
 }
 
+#[derive(Serialize, ToSchema)]
+pub struct PasteResponse {
+    pub id: String,
+    pub views: i32,
+    pub expires_at: Option<NaiveDateTime>,
+}
+
 #[derive(Serialize, Deserialize, ToSchema)]
 pub struct CreatePasteDto {
     pub title: String,

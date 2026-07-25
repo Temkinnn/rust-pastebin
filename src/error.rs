@@ -5,8 +5,6 @@ use utoipa::ToSchema;
 
 #[derive(Debug, Error, ToSchema)]
 pub enum AppError {
-    #[error("Internal server error")]
-    Internal,
     #[error("Database Error")]
     Database {
         #[from]
@@ -21,7 +19,6 @@ impl ResponseError for AppError {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
             AppError::Database { source: _ } => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::Internal => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::NotFound => StatusCode::NOT_FOUND,
         }
     }

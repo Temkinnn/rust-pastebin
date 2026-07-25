@@ -28,11 +28,6 @@ impl PasteService {
             expires_in_hours,
         } = data;
 
-        let expires_at: Option<NaiveDateTime> = match expires_in_hours {
-            None => None,
-            Some(hours) => Some(Utc::now().naive_utc() + Duration::hours(hours)),
-        };
-
         Ok(self
             .0
             .create_paste(CreatePasteRepoDto {
@@ -41,7 +36,10 @@ impl PasteService {
                 content,
                 language,
                 one_time,
-                expires_at,
+                expires_at: Some(
+                    Utc::now().naive_utc()
+                        + Duration::hours(expires_in_hours.unwrap_or(24 * 7 * 30)), // 30 days by default
+                ),
             })
             .await?)
     }
@@ -57,7 +55,15 @@ impl PasteService {
     }
 
     pub async fn get_paste_by_id(&self, id: Id) -> AppResult<Paste> {
-        self.0.view_paste(id).await?.ok_or(AppError::NotFound)
+        let paste = self.0.view_paste(id).await?.ok_or(AppError::NotFound)?;
+        if paste.one_time {
+            return self
+                .0
+                .delete_paste(paste.id)
+                .await?
+                .ok_or(AppError::NotFound);
+        }
+        Ok(paste)
     }
 
     pub async fn update_paste_data(&self, id: Id, data: UpdatePasteDto) -> AppResult<Paste> {

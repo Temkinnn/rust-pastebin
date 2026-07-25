@@ -52,7 +52,7 @@ impl PasteRepository {
             "
             Update paste
             Set views = views + 1
-            Where id = $1
+            Where id = $1 And expires_at < Current_timestamp
             Returning id, title, content, language, views, one_time, expires_at
             ",
             id

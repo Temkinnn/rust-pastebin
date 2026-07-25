@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS paste (
   views Int NOT NULL DEFAULT 0,
   one_time Bool NOT NULL DEFAULT FALSE,
   created_at Timestamp DEFAULT CURRENT_TIMESTAMP,
-  expires_at Timestamp DEFAULT NULL
+  expires_at Timestamp Not NULL
 );

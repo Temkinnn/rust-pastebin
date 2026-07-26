@@ -3,13 +3,11 @@ use crate::{
     types::{Database, DatabaseResult, Id},
 };
 
-pub struct PasteRepository {
-    pub pool: Database,
-}
+pub struct PasteRepository(Database);
 
 impl PasteRepository {
     pub fn new(pool: Database) -> Self {
-        Self { pool }
+        Self(pool)
     }
 
     pub async fn create_paste(&self, dto: CreatePasteRepoDto) -> DatabaseResult<PasteResponse> {
@@ -27,7 +25,7 @@ impl PasteRepository {
             dto.one_time.unwrap_or(false),
             dto.expires_at
         )
-        .fetch_one(&self.pool)
+        .fetch_one(&self.0)
         .await
     }
 
@@ -42,7 +40,7 @@ impl PasteRepository {
             limit,
             offset
         )
-        .fetch_all(&self.pool)
+        .fetch_all(&self.0)
         .await
     }
 
@@ -57,7 +55,7 @@ impl PasteRepository {
             ",
             id
         )
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.0)
         .await
     }
 
@@ -86,7 +84,7 @@ impl PasteRepository {
             data.one_time,
             data.expires_at
         )
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.0)
         .await
     }
 
@@ -100,7 +98,7 @@ impl PasteRepository {
             ",
             id,
         )
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.0)
         .await
     }
 }

@@ -18,6 +18,8 @@ impl PasteService {
         Self(repo)
     }
 
+    const DEFAULT_EXPIRE_HOURS: i64 = 24 * 7 * 30;
+
     pub async fn create_paste(&self, data: CreatePasteDto) -> AppResult<PasteResponse> {
         let id = Uuid::now_v7().to_string();
 
@@ -29,6 +31,8 @@ impl PasteService {
             expires_in_hours,
         } = data;
 
+        let expires_in_hours = expires_in_hours.unwrap_or(Self::DEFAULT_EXPIRE_HOURS);
+
         Ok(self
             .0
             .create_paste(CreatePasteRepoDto {
@@ -38,8 +42,7 @@ impl PasteService {
                 language,
                 one_time,
                 expires_at: Some(
-                    Utc::now().naive_utc()
-                        + Duration::hours(expires_in_hours.unwrap_or(24 * 7 * 30)), // 30 days by default
+                    Utc::now().naive_utc() + Duration::hours(expires_in_hours), // 30 days by default
                 ),
             })
             .await?)
@@ -58,16 +61,16 @@ impl PasteService {
     pub async fn get_paste_by_id(&self, id: Id) -> AppResult<Paste> {
         let paste = self.0.view_paste(id).await?.ok_or(AppError::NotFound)?;
         if paste.one_time {
-            return self
-                .0
+            self.0
                 .delete_paste(paste.id)
                 .await?
-                .ok_or(AppError::NotFound);
+                .ok_or(AppError::NotFound)
+        } else {
+            Ok(paste)
         }
-        Ok(paste)
     }
 
-    pub async fn update_paste_data(&self, id: Id, data: UpdatePasteDto) -> AppResult<Paste> {
+    pub async fn update_paste(&self, id: Id, data: UpdatePasteDto) -> AppResult<Paste> {
         let UpdatePasteDto {
             title,
             content,
@@ -76,10 +79,8 @@ impl PasteService {
             expires_in_hours,
         } = data;
 
-        let expires_at: Option<NaiveDateTime> = match expires_in_hours {
-            None => None,
-            Some(hours) => Some(Utc::now().naive_utc() + Duration::hours(hours)),
-        };
+        let expires_at: Option<NaiveDateTime> =
+            expires_in_hours.map(|hours| Utc::now().naive_utc() + Duration::hours(hours));
 
         self.0
             .update_paste(
@@ -100,3 +101,5 @@ impl PasteService {
         self.0.delete_paste(id).await?.ok_or(AppError::NotFound)
     }
 }
+
+

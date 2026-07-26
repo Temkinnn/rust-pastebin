@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use actix_web::{App, HttpServer};
+use tracing::{error, info};
 use utoipa_actix_web::AppExt;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -13,15 +14,16 @@ async fn main() -> std::io::Result<()> {
     let env_vars = Env::init();
 
     let pool = DatabasePool::init(env_vars.database_url).await;
-
     let clean_up_service = CleanUpService::new(pool.clone());
+
+    tracing_subscriber::fmt::init();
 
     tokio::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_mins(10));
         loop {
             interval.tick().await;
             if let Err(err) = clean_up_service.cleanup_expired().await {
-                eprintln!("Cleanup error: {err}");
+                error!("Cleanup error: {err}");
             }
         }
     });
@@ -37,10 +39,7 @@ async fn main() -> std::io::Result<()> {
     })
     .bind((env_vars.host.clone(), env_vars.port))?;
 
-    println!(
-        "Server is running on http://{}:{}",
-        env_vars.host, env_vars.port
-    );
+    info!("Server has started!");
 
     server.run().await
 }

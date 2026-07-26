@@ -1,3 +1,5 @@
+use tracing::{info, instrument};
+
 use crate::types::Database;
 
 #[derive(Debug)]
@@ -8,12 +10,15 @@ impl CleanUpService {
         Self(pool)
     }
 
+    #[instrument(name = "Cleanup", skip(self))]
     pub async fn cleanup_expired(&self) -> Result<(), sqlx::Error> {
         let result = sqlx::query!("DELETE FROM paste WHERE expires_at < NOW()")
             .execute(&self.0)
             .await?;
 
-        println!("[cleanup]: Deleted: {}", result.rows_affected());
+        let rows = result.rows_affected();
+
+        info!("Deleted: {}", rows);
 
         Ok(())
     }
